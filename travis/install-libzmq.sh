@@ -15,6 +15,7 @@ else
   export CPPFLAGS="-I$HOME/devroot/include"
   export LDFLAGS="-L$HOME/devroot/lib"
   export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/devroot/lib"
+  export PKG_CONFIG_PATH="$HOME/devroot/lib/pkgconfig"
 
   ./configure --prefix="$HOME/devroot"  --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32"
   make check
