@@ -1,6 +1,6 @@
 #define DEBUG
 
-#include "dmut/package.dm"
+#include "dmut/_package.dm"
 
 #include "dmzmq/_dmzmq_defines.dm"
 #include "dmzmq/callback_socket.dm"
