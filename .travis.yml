@@ -29,13 +29,10 @@ before_script:
   - travis/install-libzmq.sh
 
 script:
-  - export CPPFLAGS="-I$HOME/devroot/include"
-  - export LDFLAGS="-L$HOME/devroot/lib"
-  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/devroot/lib"
+  - source travis/setup-env.sh
   - cmake -DCMAKE_PREFIX_PATH="$HOME/devroot" libdmzmq
   - make
 
-  - source $HOME/BYOND-${BYOND_MAJOR}.${BYOND_MINOR}/byond/bin/byondsetup
   - scripts/dm.sh -DTESTING dmzmq.dme
 
   - DreamDaemon dmzmq.dmb -trusted 2>&1 | tee dmzmq.log
