@@ -23,3 +23,4 @@ set(dmzmq_LIBS
 
 add_library(dmzmq SHARED ${dmzmq_SOURCES})
 target_link_libraries(dmzmq ${dmzmq_LIBS})
+set_target_properties(dmzmq PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")

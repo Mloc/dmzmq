@@ -1,5 +1,5 @@
 language: c
-sudo: false
+sudo: true
 
 env:
   BYOND_MAJOR="509"
@@ -13,15 +13,31 @@ addons:
   apt:
     packages:
       - cmake
+      - gcc-multilib
       - libc6-i386
       - libgcc1:i386
       - libstdc++6:i386
-      - libzmq-dev:i386
 
 before_script:
   - ./install-byond.sh
 
 script:
+  - git clone git://github.com/jedisct1/libsodium.git
+  - cd libsodium
+  - ./autogen.sh
+  - ./configure --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" && make check
+  - sudo make install
+  - sudo ldconfig
+  - cd ..
+
+  - git clone git://github.com/zeromq/libzmq.git
+  - cd libzmq
+  - ./autogen.sh
+  - ./configure --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" && make check
+  - sudo make install
+  - sudo ldconfig
+  - cd ..
+
   - cmake libdmzmq
   - make
 
