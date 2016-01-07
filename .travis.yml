@@ -1,13 +1,17 @@
 language: c
-sudo: true
+sudo: false
 
 env:
   BYOND_MAJOR="509"
   BYOND_MINOR="1318"
 
+  LIBSODIUM_VERSION="1.0.8"
+  LIBZMQ_VERSION="4.1.4"
+
 cache:
   directories:
     - $HOME/BYOND-${BYOND_MAJOR}.${BYOND_MINOR}
+    - $HOME/devroot
 
 addons:
   apt:
@@ -20,30 +24,19 @@ addons:
       - libstdc++6:i386
 
 before_script:
-  - ./install-byond.sh
+  - travis/install-byond.sh
+  - travis/install-libsodium.sh
+  - travis/install-libzmq.sh
 
 script:
-  - git clone git://github.com/jedisct1/libsodium.git
-  - cd libsodium
-  - ./autogen.sh
-  - ./configure --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" && make check
-  - sudo make install
-  - sudo ldconfig
-  - cd ..
-
-  - git clone git://github.com/zeromq/libzmq.git
-  - cd libzmq
-  - ./autogen.sh
-  - ./configure --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" && make check
-  - sudo make install
-  - sudo ldconfig
-  - cd ..
-
+  - export CPPFLAGS="-I$HOME/devroot/include"
+  - export LDFLAGS="-L$HOME/devroot/lib"
+  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/devroot/lib"
   - cmake libdmzmq
   - make
 
   - source $HOME/BYOND-${BYOND_MAJOR}.${BYOND_MINOR}/byond/bin/byondsetup
   - scripts/dm.sh -DTESTING dmzmq.dme
 
-  - DreamDaemon dmzmq.dmb 2>&1 | tee dmzmq.log
+  - DreamDaemon dmzmq.dmb -trusted 2>&1 | tee dmzmq.log
   - "grep '## DMUT: RESULT: PASSING' dmzmq.log"
