@@ -1,0 +1,11 @@
+#define DEBUG
+
+#include "dmut/package.dm"
+
+#include "dmzmq/_dmzmq_defines.dm"
+#include "dmzmq/callback_socket.dm"
+#include "dmzmq/core.dm"
+#include "dmzmq/polling.dm"
+#include "dmzmq/socket.dm"
+
+#include "test/_test_system.dm"
