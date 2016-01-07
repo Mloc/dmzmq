@@ -1,3 +1,3 @@
 [submodule "dmut"]
 	path = dmut
-	url = git@github.com:Mloc/loquacious-duck.git
+	url = https://github.com/Mloc/dmut.git
