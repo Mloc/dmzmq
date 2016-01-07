@@ -1,3 +1,4 @@
 [submodule "dmut"]
 	path = dmut
-	url = https://github.com/Mloc/dmut.git
+    url = https://github.com/Mloc/dmut.git
+    branch = master
