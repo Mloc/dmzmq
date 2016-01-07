@@ -1,0 +1,32 @@
+language: c
+sudo: false
+
+env:
+  BYOND_MAJOR="509"
+  BYOND_MINOR="1318"
+
+cache:
+  directories:
+    - $HOME/BYOND-${BYOND_MAJOR}.${BYOND_MINOR}
+
+addons:
+  apt:
+    packages:
+      - cmake
+      - libc6-i386
+      - libgcc1:i386
+      - libstdc++6:i386
+      - libzmq-dev:i386
+
+before_script:
+  - ./install-byond.sh
+
+script:
+  - cmake libdmzmq
+  - make
+
+  - source $HOME/BYOND-${BYOND_MAJOR}.${BYOND_MINOR}/byond/bin/byondsetup
+  - scripts/dm.sh -DTESTING dmzmq.dme
+
+  - DreamDaemon dmzmq.dmb 2>&1 | tee dmzmq.log
+  - "grep '## DMUT: RESULT: PASSING' dmzmq.log"
