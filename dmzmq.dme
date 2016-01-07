@@ -8,4 +8,4 @@
 #include "dmzmq/polling.dm"
 #include "dmzmq/socket.dm"
 
-#include "test/_tests.dm"
+#include "tests/_tests.dm"
