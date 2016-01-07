@@ -32,7 +32,7 @@ script:
   - export CPPFLAGS="-I$HOME/devroot/include"
   - export LDFLAGS="-L$HOME/devroot/lib"
   - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/devroot/lib"
-  - cmake -DCMAKE_PREFIX_PATH="$PATH/devroot" libdmzmq
+  - cmake -DCMAKE_PREFIX_PATH="$HOME/devroot" libdmzmq
   - make
 
   - source $HOME/BYOND-${BYOND_MAJOR}.${BYOND_MINOR}/byond/bin/byondsetup
