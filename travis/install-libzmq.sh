@@ -2,7 +2,7 @@
 set -e
 if [ -f "$HOME/devroot/versions/libzmq${LIBZMQ_VERSION}" ];
 then
-  echo "Using cached libzmq ${libzmq_VERSION}"
+  echo "Using cached libzmq ${LIBZMQ_VERSION}"
 else
   echo "Building libzmq ${LIBZMQ_VERSION}"
   mkdir -p "$HOME/depbuild"
