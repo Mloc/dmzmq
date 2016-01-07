@@ -29,8 +29,8 @@ before_script:
   - travis/install-libzmq.sh
 
 script:
-    #  - export CPPFLAGS="-I$HOME/devroot/include"
-    #  - export LDFLAGS="-L$HOME/devroot/lib"
+  - export CPPFLAGS="-I$HOME/devroot/include"
+  - export LDFLAGS="-L$HOME/devroot/lib"
   - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/devroot/lib"
   - cmake -DCMAKE_PREFIX_PATH="$PATH/devroot" libdmzmq
   - make

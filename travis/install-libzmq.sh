@@ -18,7 +18,7 @@ else
   export PKG_CONFIG_PATH="$HOME/devroot/lib/pkgconfig"
 
   ./configure --prefix="$HOME/devroot"  --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32"
-  make check
+  make
   make install
 
   mkdir -p "$HOME/devroot/versions"
