@@ -1,0 +1,9 @@
+platform:
+  - x86
+
+install:
+  - curl 'http://miru.hk/archive/ZeroMQ-4.0.4~miru1.0-x86.exe' -o 'zeromq.exe'
+  - ps: Start-Process 'zeromq.exe' '/S' -Wait
+
+before_build:
+  - cmake -G 'Visual Studio 12 2013' .
