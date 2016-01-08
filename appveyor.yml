@@ -2,7 +2,7 @@ platform:
   - x86
 
 install:
-  - ps: (new-object net.webclient).DownloadFile('http://miru.hk/archive/ZeroMQ-4.0.4~miru1.0-x86.exe', 'zeromq.exe')
+  - curl -L 'http://miru.hk/archive/ZeroMQ-4.0.4~miru1.0-x86.exe' -o 'zeromq.exe'
   - ps: Start-Process 'zeromq.exe' '/S' -Wait
 
 before_build:
