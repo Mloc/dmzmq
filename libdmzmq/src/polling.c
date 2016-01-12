@@ -10,11 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// working pollset, set by dmzmq_pollread and read by dmzmq_pollnext
-
-int work_index;
-
-// cache table for generated poll lists
+// cache table for generated pollsets
 ct_table *poll_cache;
 
 void dmzmq_free_pollset(void *data)
