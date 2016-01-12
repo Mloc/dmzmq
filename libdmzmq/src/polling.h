@@ -20,6 +20,5 @@ void dmzmq_polling_setup();
 void dmzmq_polling_shutdown();
 
 DLL_EXPORT char *dmzmq_pollread(int n, char **v);
-DLL_EXPORT char *dmzmq_pollnext(int n, char **v);
 
 #endif//POLLING_H

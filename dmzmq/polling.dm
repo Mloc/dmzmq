@@ -25,22 +25,18 @@
 	var/ret = _dmzmq_pollread(_poll_str)
 	_DMZMQ_HANDLE_ERR(ret)
 
-	if(ret != "END")
-		while(1)
-			ret = _dmzmq_pollnext(0)
-			_DMZMQ_HANDLE_ERR(ret)
+	var/list/sds = params2list(copytext(ret, 5, 0))
 
-			if(ret == "END")
-				break
+	for(var/sd in sds)
+		on_readable(sock_datums[sd])
 
-			ASSERT(copytext(ret, 1, 4) == "MSG")
-			var/msgstart = findtext(ret, ":", 5)
-			ASSERT(msgstart)
+/datum/zmq_pollset/proc/on_readable(datum/zmq_socket/sock)
+	while(1)
+		var/msg = sock.recv(ZMQ_DONTWAIT)
+		if(msg == -2) // EAGAIN
+			break
 
-			var/sock_id = copytext(ret, 5, msgstart)
-			var/message = copytext(ret, msgstart + 1)
-
-			on_msg(sock_datums[sock_id], message)
+		on_msg(sock, msg)
 
 // hookable callback for messages
-/datum/zmq_pollset/proc/on_msg(socket, msg)
+/datum/zmq_pollset/proc/on_msg(datum/zmq_socket/sock, msg)

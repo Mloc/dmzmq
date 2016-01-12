@@ -11,7 +11,7 @@
 #include <string.h>
 
 // working pollset, set by dmzmq_pollread and read by dmzmq_pollnext
-dmzmq_pollset *work_pollset;
+
 int work_index;
 
 // cache table for generated poll lists
@@ -26,7 +26,6 @@ void dmzmq_free_pollset(void *data)
 
 dmzmq_pollset *dmzmq_parse_pollset(const char *poll_str)
 {
-
     size_t len = strlen(poll_str);
     dmzmq_pollset *pollset = ct_get(poll_cache, poll_str, len);
     if(pollset == NULL)
@@ -89,7 +88,7 @@ DLL_EXPORT char *dmzmq_pollread(int n, char **v)
     DMZMQ_ASSERT(n == 1);
     DMZMQ_ASSERT(zmq_ctx != NULL);
 
-    work_pollset = dmzmq_parse_pollset(v[0]);
+    dmzmq_pollset *work_pollset = dmzmq_parse_pollset(v[0]);
     int ret = zmq_poll(work_pollset->items, work_pollset->size, 0);
 
     if(ret == -1)
@@ -97,44 +96,22 @@ DLL_EXPORT char *dmzmq_pollread(int n, char **v)
         return dmzmq_strerrno();
     }
 
-    work_index = 0;
-
     if(ret == 0)
     {
-        return "END";
+        return "RES:";
     }
-    else
-    {
-        return "";
-    }
-}
-
-DLL_EXPORT char *dmzmq_pollnext(int n, char **v)
-{
-    DMZMQ_ASSERT(n == 0);
-    DMZMQ_ASSERT(zmq_ctx != NULL);
+    sprintf(return_buf, "RES:");
+    char *rbuf_pointer = return_buf + 4;
 
     size_t size = work_pollset->size;
-    for(; work_index < size; work_index++)
+    int i;
+    for(i = 0; i < size; i++)
     {
-        int sock_id = work_pollset->socket_ids[work_index];
-        void *zmq_sock = dmzmq_get_sock(sock_id);
-
-        int offset = sprintf(return_buf, "MSG:%d:", sock_id);
-        int ret = zmq_recv(zmq_sock, return_buf + offset,
-                           DMZMQ_RBUF_SIZE - (offset + 1), ZMQ_DONTWAIT);
-
-        if(ret == -1)
+        if(work_pollset->items[i].revents & ZMQ_POLLIN)
         {
-            if(errno == EAGAIN)
-            {
-                continue;
-            }
-            return dmzmq_strerrno();
+            rbuf_pointer += sprintf(rbuf_pointer, "%d;",
+                                    work_pollset->socket_ids[i]);
         }
-
-        return_buf[offset + MIN(ret, DMZMQ_RBUF_SIZE - 5)] = '\0';
-        return return_buf;
     }
-    return "END";
+    return return_buf;
 }

@@ -12,10 +12,11 @@ DLL_EXPORT char *dmzmq_close(int n, char **v);
 DLL_EXPORT char *dmzmq_connect(int n, char **v);
 DLL_EXPORT char *dmzmq_bind(int n, char **v);
 
-DLL_EXPORT char *dmzmq_subscribe(int n, char **v);
-
 DLL_EXPORT char *dmzmq_send(int n, char **v);
 DLL_EXPORT char *dmzmq_recv(int n, char **v);
+
+DLL_EXPORT char *dmzmq_setsockopt(int n, char **v);
+DLL_EXPORT char *dmzmq_getsockopt(int n, char **v);
 
 void *dmzmq_get_sock(int sock_id);
 

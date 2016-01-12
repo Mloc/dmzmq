@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 
 int dmzmq_socktypes[] = {
     ZMQ_PAIR,
@@ -62,7 +63,7 @@ DLL_EXPORT char *dmzmq_socket(int n, char **v)
         return "ERR:OUTOFSOCKETS";
     }
 
-    void *zmq_sock = zmq_socket(zmq_ctx, dmzmq_socktypes[(int)(v[0][0] - 'a')]);
+    void *zmq_sock = zmq_socket(zmq_ctx, atoi(v[0]));
     if(zmq_sock == NULL)
     {
         return dmzmq_strerrno();
@@ -124,31 +125,15 @@ DLL_EXPORT char *dmzmq_bind(int n, char **v)
     return "";
 }
 
-DLL_EXPORT char *dmzmq_subscribe(int n, char **v)
-{
-    DMZMQ_ASSERT(n == 2);
-    DMZMQ_ASSERT(zmq_ctx != NULL);
-
-    void *zmq_sock = dmzmq_get_sock(atoi(v[0]));
-    DMZMQ_ASSERT(zmq_sock != NULL);
-
-    if(zmq_setsockopt(zmq_sock, ZMQ_SUBSCRIBE, v[1], strlen(v[1])) == -1)
-    {
-        return dmzmq_strerrno();
-    }
-
-    return "";
-}
-
 DLL_EXPORT char *dmzmq_send(int n, char **v)
 {
-    DMZMQ_ASSERT(n == 2);
+    DMZMQ_ASSERT(n == 3);
     DMZMQ_ASSERT(zmq_ctx != NULL);
 
     void *zmq_sock = dmzmq_get_sock(atoi(v[0]));
     DMZMQ_ASSERT(zmq_sock != NULL);
 
-    if(zmq_send(zmq_sock, v[1], strlen(v[1]), 0) == -1)
+    if(zmq_send(zmq_sock, v[1], strlen(v[1]), atoi(v[2])) == -1)
     {
         return dmzmq_strerrno();
     }
@@ -160,7 +145,7 @@ DLL_EXPORT char *dmzmq_send(int n, char **v)
 
 DLL_EXPORT char *dmzmq_recv(int n, char **v)
 {
-    DMZMQ_ASSERT(n == 1);
+    DMZMQ_ASSERT(n == 2);
     DMZMQ_ASSERT(zmq_ctx != NULL);
 
     void *zmq_sock = dmzmq_get_sock(atoi(v[0]));
@@ -168,7 +153,8 @@ DLL_EXPORT char *dmzmq_recv(int n, char **v)
 
     sprintf(return_buf, "MSG:");
 
-    int ret = zmq_recv(zmq_sock, return_buf + 4, DMZMQ_RBUF_SIZE - 5, 0);
+    int flags = atoi(v[1]);
+    int ret = zmq_recv(zmq_sock, return_buf + 4, DMZMQ_RBUF_SIZE - 5, flags);
 
     if(ret == -1)
     {
@@ -177,6 +163,100 @@ DLL_EXPORT char *dmzmq_recv(int n, char **v)
 
     return_buf[4 + MIN(ret, DMZMQ_RBUF_SIZE - 5)] = '\0';
 
+    return return_buf;
+}
+
+
+int int64_sockopts[] = DMZMQ_INT64_SOCKOPTS;
+int int_sockopts[] = DMZMQ_INT_SOCKOPTS;
+int str_sockopts[] = DMZMQ_STR_SOCKOPTS;
+
+DLL_EXPORT char *dmzmq_setsockopt(int n, char **v)
+{
+    DMZMQ_ASSERT(n == 3);
+    DMZMQ_ASSERT(zmq_ctx != NULL);
+
+    void *zmq_sock = dmzmq_get_sock(atoi(v[0]));
+    DMZMQ_ASSERT(zmq_sock != NULL);
+   
+    int option = atoi(v[1]);
+    if(array_search_int(int64_sockopts, option, DMZMQ_INT64_SOCKOPT_COUNT))
+    {
+        int64_t value = atoll(v[2]);
+        if(zmq_setsockopt(zmq_sock, option, &value, sizeof(value)) == -1)
+        {
+            return dmzmq_strerrno();
+        }
+    }
+    else if(array_search_int(int_sockopts, option, DMZMQ_INT_SOCKOPT_COUNT))
+    {
+        int value = atoi(v[2]);
+        if(zmq_setsockopt(zmq_sock, option, &value, sizeof(value)) == -1)
+        {
+            return dmzmq_strerrno();
+        }
+    }
+    else if(array_search_int(str_sockopts, option, DMZMQ_STR_SOCKOPT_COUNT))
+    {
+        if(zmq_setsockopt(zmq_sock, option, v[2], strlen(v[2])) == -1)
+        {
+            return dmzmq_strerrno();
+        }
+    }
+    else
+    {
+        return "ERR:_NOSUCHSOCKOPT";
+    }
+    return "";
+}
+
+DLL_EXPORT char *dmzmq_getsockopt(int n, char **v)
+{
+    DMZMQ_ASSERT(n == 2 || n == 3);
+    DMZMQ_ASSERT(zmq_ctx != NULL);
+
+    void *zmq_sock = dmzmq_get_sock(atoi(v[0]));
+    DMZMQ_ASSERT(zmq_sock != NULL);
+
+    sprintf(return_buf, "VAL:");
+    size_t option_len;
+
+    char *rbuf_ptr = return_buf + 4;
+
+    int option = atoi(v[1]);
+    if(array_search_int(int64_sockopts, option, DMZMQ_INT64_SOCKOPT_COUNT))
+    {
+        int64_t value;
+        size_t value_size = sizeof(value);
+        if(zmq_getsockopt(zmq_sock, option, &value, &value_size) == -1)
+        {
+            return dmzmq_strerrno();
+        }
+        sprintf(return_buf + 4, "%"PRIu64, value);
+    }
+    else if(array_search_int(int_sockopts, option, DMZMQ_INT_SOCKOPT_COUNT))
+    {
+        int value;
+        size_t value_size = sizeof(value);
+        if(zmq_getsockopt(zmq_sock, option, &value, &value_size) == -1)
+        {
+            return dmzmq_strerrno();
+        }
+        sprintf(return_buf + 4, "%d", value);
+    }
+    else if(array_search_int(str_sockopts, option, DMZMQ_STR_SOCKOPT_COUNT))
+    {
+        option_len = DMZMQ_RBUF_SIZE - 5;
+        if(zmq_getsockopt(zmq_sock, option, rbuf_ptr, &option_len) == -1)
+        {
+            return dmzmq_strerrno();
+        }
+        rbuf_ptr[option_len] = '\0';
+    }
+    else
+    {
+        return "ERR:_NOSUCHSOCKOPT";
+    }
     return return_buf;
 }
 

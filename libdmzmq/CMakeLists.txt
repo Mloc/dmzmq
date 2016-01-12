@@ -10,6 +10,7 @@ include_directories(
 )
 
 set(dmzmq_SOURCES
+    src/base.c
     src/dmzmq.c
     src/socket.c
     src/polling.c
