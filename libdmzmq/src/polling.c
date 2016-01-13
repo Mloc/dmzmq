@@ -26,7 +26,7 @@ dmzmq_pollset *dmzmq_parse_pollset(const char *poll_str)
     dmzmq_pollset *pollset = ct_get(poll_cache, poll_str, len);
     if(pollset == NULL)
     {
-        int sockets = 1;
+        int sockets = len != 0 ? 1 : 0;
 
         int i;
         for(i = 0; i < len; i++)

@@ -39,17 +39,20 @@
 
 	return copytext(ret, 5, 0)
 
-/datum/zmq_socket/proc/send_multi(list/messages)
-	for(var/i = 1; i < messages.len; i++)
-		send(messages[i], ZMQ_SNDMORE)
-	send(messages[messages.len])
+/datum/zmq_socket/proc/send_multi(list/msg)
+	for(var/i = 1; i < msg.len; i++)
+		send(msg[i], ZMQ_SNDMORE)
+	send(msg[msg.len])
 
-/datum/zmq_socket/proc/recv_multi()
-	var/list/messages = list()
-	messages += recv()
+/datum/zmq_socket/proc/recv_multi(flags = 0)
+	var/list/msg = list()
+	var/ret = recv(flags)
+	if(ret == -2)
+		return ret
+	msg += ret
 	while(getsockopt(ZMQ_RCVMORE) == "1")
-		messages += recv()
-	return messages
+		msg += recv(flags)
+	return msg
 
 /datum/zmq_socket/proc/setsockopt(opt, value)
 	var/ret = _dmzmq_setsockopt(_zmq_sock, opt, value)

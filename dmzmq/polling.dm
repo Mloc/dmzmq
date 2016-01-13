@@ -20,7 +20,7 @@
 /datum/zmq_pollset/proc/poll()
 	if(_needs_update)
 		_poll_str = list2params(sock_ids)
-		_needs_update = 0
+		_needs_update = 0	
 
 	var/ret = _dmzmq_pollread(_poll_str)
 	_DMZMQ_HANDLE_ERR(ret)
@@ -32,11 +32,11 @@
 
 /datum/zmq_pollset/proc/on_readable(datum/zmq_socket/sock)
 	while(1)
-		var/msg = sock.recv(ZMQ_DONTWAIT)
+		var/list/msg = sock.recv_multi(ZMQ_DONTWAIT)
 		if(msg == -2) // EAGAIN
 			break
 
 		on_msg(sock, msg)
 
 // hookable callback for messages
-/datum/zmq_pollset/proc/on_msg(datum/zmq_socket/sock, msg)
+/datum/zmq_pollset/proc/on_msg(datum/zmq_socket/sock, list/msg)
