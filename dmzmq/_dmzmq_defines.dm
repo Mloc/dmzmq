@@ -22,7 +22,6 @@
 #define _dmzmq_recv(sock, flags) _DMZMQ_SOCALL("dmzmq_recv")(sock, "[flags]")
 
 #define _dmzmq_pollread(pollset) _DMZMQ_SOCALL("dmzmq_pollread")(pollset)
-#define _dmzmq_pollnext(_) _DMZMQ_SOCALL("dmzmq_pollnext")()
 
 /exception/dmzmq_error
 #define _DMZMQ_HANDLE_ERR(str) if(copytext(str, 1, 4) == "ERR") { throw new /exception/dmzmq_error(copytext(str, 5, 0), __FILE__, __LINE__) }
