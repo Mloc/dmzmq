@@ -3,6 +3,7 @@
 
 #include "setup.dm"
 #include "socket.dm"
+#include "regression.dm"
 
 /world/New()
 	. = ..()
