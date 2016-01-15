@@ -9,4 +9,5 @@ before_build:
   - cmake -G "Visual Studio 12 2013" -DCMAKE_PREFIX_PATH="C:\Program Files (x86)\ZeroMQ 4.0.4" libdmzmq
 
 on_finish:
+  - reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
