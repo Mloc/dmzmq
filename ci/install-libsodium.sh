@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-if [ -f "$HOME/devroot/versions/libsodium${LIBSODIUM_VERSION}" ];
+if [ -f "$1/versions/libsodium${LIBSODIUM_VERSION}" ];
 then
   echo "Using cached libsodium ${LIBSODIUM_VERSION}"
 else
@@ -12,10 +12,10 @@ else
   cd "libsodium-${LIBSODIUM_VERSION}"
   ./autogen.sh
 
-  ./configure --prefix="$HOME/devroot" --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32"
+  ./configure --prefix="$1" --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32"
   make check
   make install
 
-  mkdir -p "$HOME/devroot/versions"
-  touch "$HOME/devroot/versions/libsodium${LIBSODIUM_VERSION}"
+  mkdir -p "$1/versions"
+  touch "$1/versions/libsodium${LIBSODIUM_VERSION}"
 fi

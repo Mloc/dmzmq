@@ -1,0 +1,75 @@
+From ac6bfd73f4a37365e50bdc02b5a7f1c500f28112 Mon Sep 17 00:00:00 2001
+From: Colm Hickey <colmohici@gmail.com>
+Date: Fri, 15 Jan 2016 20:17:55 +0000
+Subject: [PATCH] fix for msys2
+
+---
+ include/zmq.h   | 13 +++++++++++++
+ src/select.hpp  |  2 +-
+ src/windows.hpp |  5 +++--
+ 3 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/include/zmq.h b/include/zmq.h
+index c58885b..0c8bffd 100644
+--- a/include/zmq.h
++++ b/include/zmq.h
+@@ -48,6 +48,19 @@ extern "C" {
+ #include <stddef.h>
+ #include <stdio.h>
+ #if defined _WIN32
++//  Set target version to Windows Server 2003, Windows XP/SP1 or higher.
++#ifndef _WIN32_WINNT
++#define _WIN32_WINNT 0x0600
++#endif
++
++#ifdef __MINGW32__
++//  Require Windows XP or higher with MinGW for getaddrinfo().
++#if(_WIN32_WINNT >= 0x0600)
++#else
++#undef _WIN32_WINNT
++#define _WIN32_WINNT 0x0600
++#endif
++#endif
+ #include <winsock2.h>
+ #endif
+ 
+diff --git a/src/select.hpp b/src/select.hpp
+index 0eb29ec..3488972 100644
+--- a/src/select.hpp
++++ b/src/select.hpp
+@@ -40,7 +40,7 @@
+ #include <vector>
+ 
+ #ifdef ZMQ_HAVE_WINDOWS
+-#include <winsock2.h>
++#include "windows.hpp"
+ #elif defined ZMQ_HAVE_OPENVMS
+ #include <sys/types.h>
+ #include <sys/time.h>
+diff --git a/src/windows.hpp b/src/windows.hpp
+index 3ced6ad..6e8570b 100644
+--- a/src/windows.hpp
++++ b/src/windows.hpp
+@@ -44,16 +44,17 @@
+ 
+ #ifdef __MINGW32__
+ //  Require Windows XP or higher with MinGW for getaddrinfo().
+-#if(_WIN32_WINNT >= 0x0501)
++#if(_WIN32_WINNT >= 0x0600)
+ #else
+ #undef _WIN32_WINNT
+-#define _WIN32_WINNT 0x0501
++#define _WIN32_WINNT 0x0600
+ #endif
+ #endif
+ 
+ #include <winsock2.h>
+ #include <windows.h>
+ #include <mswsock.h>
++#include <iphlpapi.h>
+ 
+ #if !defined __MINGW32__
+ #include <Mstcpip.h>
+-- 
+2.7.0
+
