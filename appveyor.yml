@@ -1,6 +1,13 @@
 platform:
   - x86
 
+environment:
+  BYOND_MAJOR: "509"
+  BYOND_MINOR: "1318"
+
+  LIBSODIUM_VERSION: "1.0.8"
+  LIBZMQ_VERSION: "4.1.4"
+
 install:
   - ci/appveyor-install.bat
 
