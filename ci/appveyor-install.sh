@@ -5,8 +5,7 @@ export PATH=/mingw32/bin:/usr/bin
 
 export LIB_PREFIX=/mingw32
 
-pacman --noconfirm -S p7zip
-alias unzip='7z e'
+pacman --noconfirm -S unzip
 
 ci/install-byond.sh
 ci/install-libsodium.sh
