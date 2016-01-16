@@ -8,7 +8,7 @@ else
   mkdir -p "$HOME/depbuild"
   cp ci/libzmq-msys2.patch "$HOME/depbuild"
   cd "$HOME/depbuild"
-  curl "http://download.zeromq.org/zeromq-${LIBZMQ_VERSION}.tar.gz" -o zeromq.tar.gz
+  curl -L "http://download.zeromq.org/zeromq-${LIBZMQ_VERSION}.tar.gz" -o zeromq.tar.gz
   tar xzf zeromq.tar.gz
   cd "zeromq-${LIBZMQ_VERSION}"
   patch -p1 < ../libzmq-msys2.patch

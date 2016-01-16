@@ -7,7 +7,7 @@ else
   echo "Building libsodium ${LIBSODIUM_VERSION}"
   mkdir -p "$HOME/depbuild"
   cd "$HOME/depbuild"
-  curl "https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERSION}.tar.gz" -o libsodium.tar.gz
+  curl -L "https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERSION}.tar.gz" -o libsodium.tar.gz
   tar xzf libsodium.tar.gz
   cd "libsodium-${LIBSODIUM_VERSION}"
   ./autogen.sh
