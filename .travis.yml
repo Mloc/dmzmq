@@ -24,12 +24,13 @@ addons:
       - libstdc++6:i386
 
 before_script:
+  - export LIB_PREFIX="$HOME/devroot"
   - ci/install-byond.sh
-  - ci/install-libsodium.sh "$HOME/devroot"
-  - ci/install-libzmq.sh "$HOME/devroot"
+  - ci/install-libsodium.sh
+  - ci/install-libzmq.sh
 
 script:
-  - source travis/setup-env.sh
+  - source ci/setup-env-travis.sh
   - cmake -DCMAKE_PREFIX_PATH="$HOME/devroot" libdmzmq
   - make
 

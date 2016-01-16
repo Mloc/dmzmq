@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-if [ -f "$1/versions/libzmq${LIBZMQ_VERSION}" ];
+if [ -f "$LIB_PREFIX/versions/libzmq${LIBZMQ_VERSION}" ];
 then
   echo "Using cached libzmq ${LIBZMQ_VERSION}"
 else
@@ -14,15 +14,14 @@ else
   patch -p1 < ../libzmq-msys2.patch
   ./autogen.sh
 
-  export CPPFLAGS="-I$1/include"
-  export LDFLAGS="-L$1/lib"
-  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$1/lib"
-  export PKG_CONFIG_PATH="$1/lib/pkgconfig"
+  export CPPFLAGS="-I$LIB_PREFIX/include"
+  export LDFLAGS="-L$LIB_PREFIX/lib"
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$LIB_PREFIX/lib"
+  export PKG_CONFIG_PATH="$LIB_PREFIX/lib/pkgconfig"
 
-  ./configure --prefix="$1"  --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32"
-  make check
+  ./configure --prefix="$LIB_PREFIX"  --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32"
   make install
 
-  mkdir -p "$1/versions"
-  touch "$1/versions/libzmq${LIBZMQ_VERSION}"
+  mkdir -p "$LIB_PREFIX/versions"
+  touch "$LIB_PREFIX/versions/libzmq${LIBZMQ_VERSION}"
 fi
