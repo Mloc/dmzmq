@@ -1,4 +1,4 @@
-set PATH=%PATH%;C:\msys64\usr\bin;C:\msys64\mingw32
+set PATH=C:\msys64\usr\bin;C:\msys64\mingw32;%PATH%
 
 cd %APPVEYOR_BUILD_FOLDER%
 
