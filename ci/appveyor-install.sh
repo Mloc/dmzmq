@@ -8,7 +8,7 @@ export BYOND_MINOR=$2
 export LIBSODIUM_VERSION=$3
 export LIBZMQ_VERSION=$4
 
-pacman -S --noconfirm p7zip
+pacman --noconfirm -S p7zip
 alias unzip='7z e'
 
 ci/install-byond.sh
