@@ -1,0 +1,11 @@
+{
+    "name": "dmzmq",
+    "version": "0.1.0",
+    "source_files": ["_package.dm"],
+    "dependencies":
+    {
+        "github": {
+            "mloc/dmut": "~1.0.0"
+        }
+    }
+}
