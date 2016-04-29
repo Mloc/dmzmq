@@ -1,7 +1,7 @@
 #define DMZMQ_API_VERSION "0.1.0"
 
 #ifndef _DMZMQ_SO
-	#define _DMZMQ_SO "libdmzmq.so"
+	#define _DMZMQ_SO "./libdmzmq.so"
 #endif
 
 #define _DMZMQ_SOCALL(zcall) call(_DMZMQ_SO, zcall)
